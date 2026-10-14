@@ -12,261 +12,278 @@
 </head>
 <body class="bg-emerald-50 min-h-screen flex items-center justify-center p-4">
 
-  <div class="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden p-6 relative">
+  <!-- 결과 화면에서 여유롭게 보일 수 있도록 max-w-2xl로 너비 확장 -->
+  <div id="main-card" class="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden p-8 relative transition-all duration-300">
     
     <!-- Header -->
-    <div class="text-center mb-6">
-      <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">2026 건양대학교 한솔대동제</span>
-      <h1 class="text-2xl font-bold text-gray-800 mt-2">🎯 나에게 딱 맞는<br>동아리 찾기</h1>
+    <div class="text-center mb-8">
+      <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">2026 건양대학교 축제</span>
+      <h1 class="text-3xl font-bold text-gray-800 mt-2">🎯 나에게 딱 맞는<br>동아리 찾기</h1>
     </div>
 
-    <!-- Progress Bar (초록색 반영) -->
-    <div class="w-full bg-gray-200 h-2 rounded-full mb-6 overflow-hidden">
-      <div id="progress" class="bg-emerald-500 h-full w-1/3 transition-all duration-300"></div>
+    <!-- Progress Bar -->
+    <div id="progress-wrapper" class="w-full bg-gray-200 h-2 rounded-full mb-8 overflow-hidden">
+      <div id="progress" class="bg-emerald-500 h-full w-[11%] transition-all duration-300"></div>
     </div>
 
     <!-- Dynamic Content Area -->
     <div id="quiz-container">
-      <!-- Questions will be rendered here dynamically -->
+      <!-- Questions & Results will be rendered here dynamically -->
     </div>
 
   </div>
 
   <script>
-    // 동아리 데이터베이스 (총 41개)
-    const clubs = {
-      // 논산 캠퍼스
-      '스매쉬': { campus: '논산', category: '체육', loc: '짐나지움 311', desc: '배드민턴 경기 규칙 이해와 스트레스 해소 및 건강 증진' },
-      '볼매': { campus: '논산', category: '체육', loc: '짐나지움 312', desc: '볼링 실력 향상과 동시에 내적 친밀감 형성 및 체력 증진' },
-      '런하이': { campus: '논산', category: '체육', loc: '짐나지움 313', desc: '러닝활동을 통한 체력향상과 정신건강 및 협동심 함양' },
-      'MARS': { campus: '논산', category: '체육', loc: '짐나지움 308', desc: '동아리를 통한 건강 증진과 대회 수상' },
-      'block': { campus: '논산', category: '체육', loc: '짐나지움 202', desc: '학교 스포츠 문화의 발전' },
-      'HENNIS': { campus: '논산', category: '문화', loc: '짐나지움 318', desc: '음악 작업을 통한 창작 능력 향상' },
-      'RIP': { campus: '논산', category: '문화', loc: '짐나지움 305', desc: '공연 준비 및 합주를 통한 친밀감 형성' },
-      '제식이': { campus: '논산', category: '문화', loc: '짐나지움 306', desc: '제식이 : 서로 다른 목소리로 함께 웃고 노래하는 우리, 때로는 웃음을, 때로는 눈물을, 때로는 설렘을 선물하고 여러분의 마음을 움직이는 보컬팀, 제식이입니다. 송제호 : 좋아하는 사람들과 함께 좋아하는 음악을 할 수 있다는 것, 참 행복한 일이에요. 저희가 무대 위에서 느끼는 즐거움과 진심이 여러분께도 전해져, 마음껏 웃고 울고 설레는 순간으로 기억되길 간절히 소망합니다.' },
-      '엉거크루': { campus: '논산', category: '문화', loc: '짐나지움 307', desc: '부원들의 댄스 실력 및 자존감 향상, 팀워크 강화' },
-      '포토박스': { campus: '논산', category: '문화', loc: '짐나지움 309', desc: '카메라 지식과 편집 기술 습득' },
-      '일루션': { campus: '논산', category: '문화', loc: '짐나지움 314', desc: '타학과 학생들과 그림을 통하여 문화적 교류를 함양' },
-      '새마을봉사동아리': { campus: '논산', category: '봉사', loc: '짐나지움 302', desc: '건강한 봉사 문화 조성' },
-      '품앗이': { campus: '논산', category: '봉사', loc: '짐나지움 301', desc: '지속적인 봉사활동을 통한 학생들의 인격 성장 도모' },
-      'JDM': { campus: '논산', category: '종교', loc: '짐나지움 310', desc: '복음전파, 세계선교, 제자훈련을 목표로 리더십 훈련' },
-      '에파타': { campus: '논산', category: '종교', loc: '짐나지움 304', desc: '천주교 신자 학생들의 신앙심 고취 및 회원 간 친목' },
-
-      // 대전 캠퍼스
-      'NF': { campus: '대전', category: '체육', loc: '명곡의학관 B02', desc: '축구를 통한 건강 증진 및 교류 확대' },
-      '럭키즈': { campus: '대전', category: '체육', loc: '명곡의학관 B03', desc: '대전-충남지역 대학생 아마추어 야구 발전' },
-      '인터셉트': { campus: '대전', category: '체육', loc: '명곡의학관 B04', desc: '정기적인 농구 활동으로 체력 증진 및 스트레스 해소' },
-      'RacketS': { campus: '대전', category: '체육', loc: '명곡의학관 B05', desc: '라켓 스포츠를 통한 건강한 대학 생활' },
-      '위스키': { campus: '대전', category: '체육', loc: '명곡의학관 B06', desc: '스키기술 향상 및 체력증진' },
-      '만두전골': { campus: '대전', category: '체육', loc: '명곡의학관 B07', desc: '주짓수를 통한 연합 훈련 및 기술 습득' },
-      '태산무언': { campus: '대전', category: '체육', loc: '명곡의학관 B08', desc: '유도를 통한 심신 단련' },
-      '황검회': { campus: '대전', category: '체육', loc: '명곡의학관 B09', desc: '검도의 기본 정신을 바탕으로 한 체력 증진' },
-      '클레프': { campus: '대전', category: '문화', loc: '명곡의학관 B10', desc: '악기연주 실력 향상 및 합주 활동' },
-      'MUSE': { campus: '대전', category: '문화', loc: '명곡의학관 B11', desc: '합주 및 공연하며 대학생활의 즐거운 추억 형성' },
-      '메타스타시스': { campus: '대전', category: '문화', loc: '명곡의학관 B13', desc: '밴드합주, 공연준비를 통한 친목 도모' },
-      '노말피플': { campus: '대전', category: '문화', loc: '명곡의학관 B14', desc: '아카펠라 연습과 동아리 인원간의 친목도모' },
-      '천지음': { campus: '대전', category: '문화', loc: '명곡의학관 B15', desc: '풍물을 통한 신체와 건강한 정신' },
-      '후룩': { campus: '대전', category: '문화', loc: '명곡의학관 B16', desc: '활력 넘치는 댄스활동을 통한 실력 증진 및 친목' },
-      '메디씨네': { campus: '대전', category: '문화', loc: '명곡의학관 B17', desc: '영화 감상을 통한 친목 도모 및 다양한 시각 함양' },
-      '보들보들': { campus: '대전', category: '문화', loc: '명곡의학관 B18', desc: '보드게임을 통한 학업 스트레스 해소' },
-      '주MONY': { campus: '대전', category: '문화', loc: '명곡의학관 B19', desc: '건전한 음주문화 정착 및 음주 폐해 예방' },
-      '난공불락': { campus: '대전', category: '문화', loc: '명곡의학관 B20', desc: '공동의 관심사 추구로 회원 간의 담합' },
-      '감염예방동아리': { campus: '대전', category: '봉사', loc: '명곡의학관 B21', desc: '지역사회와 협력하는 봉사활동 추진' },
-      '심봉사': { campus: '대전', category: '봉사', loc: '명곡의학관 B22', desc: '회원들의 정기적인 봉사 참여 유도와 진료 교육' },
-      '사랑의 RCY': { campus: '대전', category: '봉사', loc: '명곡의학관 B23', desc: '적십자 이념 교육 및 다양한 봉사활동 경험' },
-      '아름드리': { campus: '대전', category: '봉사', loc: '명곡의학관 B24', desc: '부원 간의 협력을 통한 사회적 연대감 형성' },
-      'CMF': { campus: '대전', category: '종교', loc: '명곡의학관 B12', desc: '신앙성장을 돕고 의료사회를 변화시키기 위한 준비' },
-      'LUX(룩스)': { campus: '대전', category: '종교', loc: '명곡의학관 B25', desc: '건강한 몸과 마음을 기르며 신앙심 성장' },
-
-      // 중앙 소속
-      'CCC': { campus: '중앙', category: '종교', loc: '짐나지움 316', desc: '캠퍼스에서 하나님의 사랑을 전하는 선교 동아리' },
-      'DFC': { campus: '중앙', category: '종교', loc: '짐나지움 315', desc: '캠퍼스 선교를 목표로 각자의 요구를 충족하고 성장' }
+    // 제공된 이미지 데이터를 기반으로 정리한 동아리 DB (소울메이트 제외)[cite: 1]
+    const clubDatabase = {
+      '체육': [
+        { name: 'block', loc: '짐나지움 202' },
+        { name: 'MARS', loc: '짐나지움 313' },
+        { name: 'NF', loc: '명곡의학관 B05' },
+        { name: 'RacketS', loc: '명곡의학관 B06' },
+        { name: '럭키즈', loc: '미정 (신규)' },
+        { name: '런하이', loc: '미정 (신규)' },
+        { name: '만두전골', loc: '미정 (가동아리)' },
+        { name: '볼매', loc: '미정 (가동아리)' },
+        { name: '스매쉬', loc: '미정 (가동아리)' },
+        { name: '위스키', loc: '미정 (신규)' },
+        { name: '인터셉트', loc: '명곡의학관 B04' },
+        { name: '태산무언', loc: '미정 (가동아리)' },
+        { name: '황검회', loc: '명곡의학관 B09' }
+      ],
+      '문화': [
+        { name: 'HENNIS', loc: '짐나지움 318/319/320' },
+        { name: 'MUSE', loc: '명곡의학관 B02' },
+        { name: 'RIP', loc: '미정' },
+        { name: '난공불락', loc: '명곡의학관 B08' },
+        { name: '노말피플', loc: '명곡의학관 B03' },
+        { name: '메디씨네', loc: '미정' },
+        { name: '메타스타시스', loc: '명곡의학관 B06' },
+        { name: '보들보들', loc: '명곡의학관 B10' },
+        { name: '일루션', loc: '짐나지움 204' },
+        { name: '제식이', loc: '짐나지움 207/208' },
+        { name: '주MONY', loc: '명곡의학관 B08' },
+        { name: '천지음', loc: '명곡의학관 B11' },
+        { name: '클레프', loc: '명곡의학관 B03' },
+        { name: '포토박스', loc: '짐나지움 302' },
+        { name: '엉거크루', loc: '짐나지움 303' },
+        { name: '후룩', loc: '명곡의학관 B04' }
+      ],
+      '봉사': [
+        { name: '감염예방동아리', loc: '미정' },
+        { name: '사랑의 RCY', loc: '명곡의학관 B07' },
+        { name: '새마을봉사동아리', loc: '미정' },
+        { name: '심봉사', loc: '명곡의학관 B11' },
+        { name: '아름드리', loc: '명곡의학관 B05' },
+        { name: '품앗이', loc: '짐나지움 314' }
+      ],
+      '종교': [
+        { name: 'CCC', loc: '짐나지움 316/317' },
+        { name: 'CMF', loc: '명곡의학관 B12' },
+        { name: 'DFC', loc: '짐나지움 315' },
+        { name: 'JDM', loc: '짐나지움 310' },
+        { name: 'LUX(룩스)', loc: '명곡의학관 203' },
+        { name: '에파타', loc: '짐나지움 321' }
+      ]
     };
 
-    let step = 1;
-    let selectedCampus = '';
-    let selectedCategory = '';
+    // 9개의 질문 데이터 (A: 체육, B: 문화, C: 친목/문화, D: 봉사)
+    const questions = [
+      {
+        q: "Q1. 금요일 마지막 수업이 끝난 후, 당신이 꿈꾸는 완벽한 저녁은?",
+        options: [
+          { text: "땀 뻘뻘 흘리며 사람들과 함께 에너지를 발산하기", type: "체육" },
+          { text: "조용한 곳에서 나만의 감성이나 취미에 몰입하기", type: "문화" },
+          { text: "마음 맞는 사람들과 시원한 음료 한 잔 나누며 수다 떨기", type: "문화" },
+          { text: "보람찬 일로 하루를 마무리하며 남을 돕기", type: "봉사" }
+        ]
+      },
+      {
+        q: "Q2. 새로운 모임이나 그룹에 들어갔을 때 당신의 모습은?",
+        options: [
+          { text: "먼저 분위기를 주도하며 사람들을 끌어모는다.", type: "체육" },
+          { text: "조용히 관찰하다가 친해진 몇몇과 깊게 교류한다.", type: "문화" },
+          { text: "모두가 즐거울 수 있도록 뒤에서 묵묵히 지원하고 챙겨준다.", type: "봉사" },
+          { text: "공통의 목표나 미션이 주어졌을 때 열정이 타오른다.", type: "종교" }
+        ]
+      },
+      {
+        q: "Q3. 스트레스가 극에 달했을 때, 가장 끌리는 해소법은?",
+        options: [
+          { text: "몸을 격렬하게 움직이거나 소리를 지른다.", type: "체육" },
+          { text: "음악을 듣거나 무언가를 새로 만들어내며 마음을 다스린다.", type: "문화" },
+          { text: "친구들과 모여 게임을 하거나 영화를 보며 딴생각을 한다.", type: "문화" },
+          { text: "마음의 평화를 찾을 수 있는 차분하고 영적인 시간에 집중한다.", type: "종교" }
+        ]
+      },
+      {
+        q: "Q4. 과제나 팀 프로젝트를 할 때 당신의 강점은?",
+        options: [
+          { text: "탁월한 순발력과 행동력으로 빠르게 기획하고 실행하기", type: "체육" },
+          { text: "남다른 감각과 디테일로 완성도 높이기", type: "문화" },
+          { text: "팀원들의 의견을 경청하고 조화롭게 중재하기", type: "봉사" },
+          { text: "약자를 배려하고 꼼꼼하게 챙기는 포용력", type: "봉사" }
+        ]
+      },
+      {
+        q: "Q5. 주말에 야외로 나갈 때, 당신이 꼭 챙기는 것은?",
+        options: [
+          { text: "편안한 운동화와 넘치는 체력", type: "체육" },
+          { text: "카메라, 이어폰, 또는 나만의 감성 아이템", type: "문화" },
+          { text: "여럿이 나누어 먹을 간식과 유쾌한 입담", type: "문화" },
+          { text: "나보다 주변을 챙길 수 있는 여유로운 마음", type: "봉사" }
+        ]
+      },
+      {
+        q: "Q6. 당신이 생각하는 '대학 생활의 낭만'이란?",
+        options: [
+          { text: "동료들과 함께 땀 흘리고 눈물 흘리는 뜨거운 도전에 참여하는 것", type: "체육" },
+          { text: "무대 위나 작품 속에서 나만의 개성을 마음껏 표현해보는 것", type: "문화" },
+          { text: "다양한 학과의 사람들과 끈끈한 인맥을 쌓고 추억을 만드는 것", type: "문화" },
+          { text: "내 작은 손길로 누군가의 삶이나 사회에 긍정적인 변화를 주는 것", type: "봉사" }
+        ]
+      },
+      {
+        q: "Q7. 낯선 사람과 대화할 때 당신이 주로 건네는 말은?",
+        options: [
+          { text: "\"요즘 운동이나 활동적인 거 하시는 거 있으세요?\"", type: "체육" },
+          { text: "\"혹시 어떤 음악/장르 좋아하세요?\"", type: "문화" },
+          { text: "\"오늘 저녁에 맛있는 거 먹으러 갈래요?\"", type: "문화" },
+          { text: "\"요즘 고민이나 힘든 일은 없으세요?\"", type: "봉사" }
+        ]
+      },
+      {
+        q: "Q8. 축제 기간 부스 체험을 한다면 가장 먼저 가고 싶은 곳은?",
+        options: [
+          { text: "상품이 걸린 미니 게임/체육 경기 부스", type: "체육" },
+          { text: "버스킹 공연이나 전시회가 열리는 예술 부스", type: "문화" },
+          { text: "맛있는 음식을 파는 주점이나 보드게임 부스", type: "문화" },
+          { text: "수익금을 좋은 곳에 기부하는 릴레이 나눔 부스", type: "봉사" }
+        ]
+      },
+      {
+        q: "Q9. 당신을 가장 잘 표현하는 단어 하나를 고른다면?",
+        options: [
+          { text: "열정 (Action)", type: "체육" },
+          { text: "감성 (Sensibility)", type: "문화" },
+          { text: "친목 (Social)", type: "문화" },
+          { text: "선의 (Kindness)", type: "봉사" }
+        ]
+      }
+    ];
 
-    function updateProgress(percent) {
+    let currentIdx = 0;
+    let scores = { '체육': 0, '문화': 0, '봉사': 0, '종교': 0 };
+
+    function updateProgress() {
+      const percent = ((currentIdx + 1) / questions.length) * 100;
       document.getElementById('progress').style.width = percent + '%';
     }
 
-    function renderStep1() {
-      updateProgress(33);
-      const container = document.getElementById('quiz-container');
-      container.innerHTML = `
-        <h2 class="text-lg font-bold text-gray-700 mb-4">Q1. 소속 캠퍼스를 선택해 주세요!</h2>
-        <div class="space-y-3">
-          <button onclick="selectCampus('논산')" class="w-full py-3 px-4 bg-gray-50 border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-emerald-50 hover:border-emerald-400 hover:text-emerald-700 transition">
-            🏢 논산 창의융합캠퍼스
-          </button>
-          <button onclick="selectCampus('대전')" class="w-full py-3 px-4 bg-gray-50 border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-emerald-50 hover:border-emerald-400 hover:text-emerald-700 transition">
-            🏥 대전 메디컬캠퍼스
-          </button>
-        </div>
-      `;
-    }
-
-    function selectCampus(campus) {
-      selectedCampus = campus;
-      step = 2;
-      renderStep2();
-    }
-
-    function renderStep2() {
-      updateProgress(66);
-      const container = document.getElementById('quiz-container');
-      container.innerHTML = `
-        <h2 class="text-lg font-bold text-gray-700 mb-4">Q2. 가장 활동하고 싶은 분야는?</h2>
-        <div class="space-y-3">
-          <button onclick="selectCategory('체육')" class="w-full py-3 px-4 bg-gray-50 border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-emerald-50 hover:border-emerald-400 hover:text-emerald-700 transition">⚽ 체육 / 액티비티</button>
-          <button onclick="selectCategory('문화')" class="w-full py-3 px-4 bg-gray-50 border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-emerald-50 hover:border-emerald-400 hover:text-emerald-700 transition">🎨 문화 / 예술 / 취미</button>
-          <button onclick="selectCategory('봉사')" class="w-full py-3 px-4 bg-gray-50 border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-emerald-50 hover:border-emerald-400 hover:text-emerald-700 transition">❤️ 봉사 / 사회공헌</button>
-          <button onclick="selectCategory('종교')" class="w-full py-3 px-4 bg-gray-50 border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-emerald-50 hover:border-emerald-400 hover:text-emerald-700 transition">🕊️ 종교 / 신앙</button>
-        </div>
-      `;
-    }
-
-    function selectCategory(category) {
-      selectedCategory = category;
-      step = 3;
-      renderStep3();
-    }
-
-    function renderStep3() {
-      updateProgress(90);
-      const container = document.getElementById('quiz-container');
-      let optionsHtml = '';
-
-      // 논산 선택지
-      if (selectedCampus === '논산') {
-        if (selectedCategory === '체육') {
-          optionsHtml = `
-            <button onclick="showResult('스매쉬')" class="opt-btn">🏸 셔틀콕을 주고받으며 코트 위 스트레스 해소</button>
-            <button onclick="showResult('볼매')" class="opt-btn">🎳 핀을 팡팡 쓰러뜨리는 쾌감과 볼링 친목</button>
-            <button onclick="showResult('런하이')" class="opt-btn">🏃 함께 바람을 가르며 달리는 러닝 세션</button>
-            <button onclick="showResult('MARS')" class="opt-btn">🏆 체력 증진과 함께 스포츠 대회 수상 목표</button>
-            <button onclick="showResult('block')" class="opt-btn">🏀 건전하고 활기찬 스포츠 문화 이끌기</button>`;
-        } else if (selectedCategory === '문화') {
-          optionsHtml = `
-            <button onclick="showResult('HENNIS')" class="opt-btn">🎧 음악 작업, 작곡 및 음원 창작</button>
-            <button onclick="showResult('RIP')" class="opt-btn">🎸 멋진 무대를 위한 밴드 합주 및 라이브</button>
-            <button onclick="showResult('제식이')" class="opt-btn">🎤 보컬 실력 향상과 함께하는 노래 모임</button>
-            <button onclick="showResult('엉거크루')" class="opt-btn">💃 에너지 넘치는 댄스 및 칼군무 퍼포먼스</button>
-            <button onclick="showResult('포토박스')" class="opt-btn">📸 카메라 촬영 및 인스타감성 편집 사진</button>
-            <button onclick="showResult('일루션')" class="opt-btn">🎨 그림과 미술을 통한 타학과 학생 교류</button>`;
-        } else if (selectedCategory === '봉사') {
-          optionsHtml = `
-            <button onclick="showResult('새마을봉사동아리')" class="opt-btn">🌱 건강하고 다채로운 나눔 문화 조성</button>
-            <button onclick="showResult('품앗이')" class="opt-btn">🤝 지속적인 나눔으로 뿌듯한 보람 얻기</button>`;
-        } else if (selectedCategory === '종교') {
-          optionsHtml = `
-            <button onclick="showResult('JDM')" class="opt-btn">📖 복음전파 및 리더십 제자 훈련</button>
-            <button onclick="showResult('에파타')" class="opt-btn">🕯️ 천주교 신자 교우 간의 신앙 모임</button>
-            <button onclick="showResult('CCC')" class="opt-btn">✝️ 캠퍼스에서 하나님의 사랑 전하기</button>
-            <button onclick="showResult('DFC')" class="opt-btn">🕊️ 공동체 신앙 성장을 목표로 하는 선교</button>`;
-        }
-      } 
-      // 대전 선택지
-      else {
-        if (selectedCategory === '체육') {
-          optionsHtml = `
-            <button onclick="showResult('NF')" class="opt-btn">⚽ 열정 가득한 잔디 위 축구 매치</button>
-            <button onclick="showResult('럭키즈')" class="opt-btn">⚾ 홈런을 노리는 아마추어 야구팀</button>
-            <button onclick="showResult('인터셉트')" class="opt-btn">🏀 코트를 누비는 정기 농구 모임</button>
-            <button onclick="showResult('RacketS')" class="opt-btn">🎾 테니스/배드민턴 라켓 스포츠</button>
-            <button onclick="showResult('위스키')" class="opt-btn">⛷️ 겨울마다 떠나는 신나는 스키 액티비티</button>
-            <button onclick="showResult('만두전골')" class="opt-btn">🥋 실전 호신술 및 주짓수 연합 훈련</button>
-            <button onclick="showResult('태산무언')" class="opt-btn">🥋 묵직한 한 판 승부, 유도 심신 단련</button>
-            <button onclick="showResult('황검회')" class="opt-btn">⚔️ 검도의 기본 정신과 기합 소리</button>`;
-        } else if (selectedCategory === '문화') {
-          optionsHtml = `
-            <button onclick="showResult('MUSE')" class="opt-btn">🎹 합주와 무대 공연으로 만드는 낭만 추억</button>
-            <button onclick="showResult('메타스타시스')" class="opt-btn">🎸 강렬한 사운드의 밴드 사운드 합주</button>
-            <button onclick="showResult('클레프')" class="opt-btn">🎻 악기 연주 실력 향상과 세션 합주</button>
-            <button onclick="showResult('노말피플')" class="opt-btn">🎶 목소리만으로 만드는 하모니, 아카펠라</button>
-            <button onclick="showResult('천지음')" class="opt-btn">🪘 흥겨운 우리 가락, 풍물패 연습</button>
-            <button onclick="showResult('후룩')" class="opt-btn">🕺 활력 넘치는 댄스 라이프</button>
-            <button onclick="showResult('메디씨네')" class="opt-btn">🎬 팝콘 먹으며 영화 보고 이야기 나누기</button>
-            <button onclick="showResult('보들보들')" class="opt-btn">🎲 다양한 보드게임으로 스트레스 날리기</button>
-            <button onclick="showResult('주MONY')" class="opt-btn">🍺 건전한 음주문화 정착 캠페인</button>
-            <button onclick="showResult('난공불락')" class="opt-btn">☕ 취향 맞는 부원들과의 자유 친목</button>`;
-        } else if (selectedCategory === '봉사') {
-          optionsHtml = `
-            <button onclick="showResult('감염예방동아리')" class="opt-btn">🦠 지역사회 협력 감염 예방 보건 봉사</button>
-            <button onclick="showResult('심봉사')" class="opt-btn">🩺 예비 의료인 관련 진료 교육 연계 봉사</button>
-            <button onclick="showResult('사랑의 RCY')" class="opt-btn">🔴 적십자 이념을 실천하는 다채로운 봉사</button>
-            <button onclick="showResult('아름드리')" class="opt-btn">🌳 부원 간 따뜻한 협력과 사회적 연대</button>`;
-        } else if (selectedCategory === '종교') {
-          optionsHtml = `
-            <button onclick="showResult('CMF')" class="opt-btn">🩺 예비 의료인을 위한 신앙 모임</button>
-            <button onclick="showResult('LUX(룩스)')" class="opt-btn">💪 건강한 몸과 마음을 기르는 신앙</button>
-            <button onclick="showResult('CCC')" class="opt-btn">✝️ 캠퍼스 선교 및 하나님의 사랑 전파</button>
-            <button onclick="showResult('DFC')" class="opt-btn">🕊️ 제자 훈련 중심의 청년 선교 모임</button>`;
-        }
+    function renderQuestion() {
+      document.getElementById('progress-wrapper').style.display = 'block';
+      if (currentIdx >= questions.length) {
+        showResult();
+        return;
       }
 
+      updateProgress();
+      const qData = questions[currentIdx];
+      const container = document.getElementById('quiz-container');
+
+      let optionsHtml = '';
+      qData.options.forEach((opt) => {
+        optionsHtml += `
+          <button onclick="handleAnswer('${opt.type}')" class="w-full text-left p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-emerald-50 hover:border-emerald-400 hover:text-emerald-700 transition text-base">
+            ${opt.text}
+          </button>
+        `;
+      });
+
       container.innerHTML = `
-        <h2 class="text-lg font-bold text-gray-700 mb-4">Q3. 어떤 세부 활동이 가장 마음에 드시나요?</h2>
-        <div class="space-y-2 max-h-80 overflow-y-auto pr-1">
+        <span class="text-sm font-bold text-emerald-600 mb-2 block">QUESTION ${currentIdx + 1} / ${questions.length}</span>
+        <h2 class="text-xl font-bold text-gray-800 mb-6">${qData.q}</h2>
+        <div class="space-y-3">
           ${optionsHtml}
         </div>
       `;
     }
 
-    function showResult(clubName) {
-      updateProgress(100);
-      const club = clubs[clubName];
+    function handleAnswer(type) {
+      scores[type]++;
+      currentIdx++;
+      renderQuestion();
+    }
+
+    function showResult() {
+      // 결과 화면 진입 시 진행바 숨김 및 컨테이너 넓이 확장 연출 가능
+      document.getElementById('progress-wrapper').style.display = 'none';
+
+      // 점수가 가장 높은 상위 2개 분과 추출 (또는 1위 분과 중심)
+      let sortedCategories = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
+      let topCategory = sortedCategories[0];
+      let secondCategory = sortedCategories[1];
+
+      // 해당 분과의 동아리 목록 가져오기 (각 분과에서 무작위 혹은 최대 3~4개 선별)
+      let recommendedClubs = [...clubDatabase[topCategory]];
+      // 만약 동아리가 부족하면 두 번째 분과에서도 일부 가져오기
+      if (recommendedClubs.length < 3) {
+        recommendedClubs = recommendedClubs.concat(clubDatabase[secondCategory]);
+      }
+      
+      // 랜덤하게 섞어서 3개 정도만 추리기
+      recommendedClubs.sort(() => 0.5 - Math.random());
+      let selectedClubs = recommendedClubs.slice(0, 3);
+
       const container = document.getElementById('quiz-container');
+
+      let clubsHtml = '';
+      selectedClubs.forEach(club => {
+        clubsHtml += `
+          <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200 flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-bold bg-emerald-200 text-emerald-800 px-2.5 py-0.5 rounded-full">${topCategory} 분과</span>
+              <h3 class="text-lg font-bold text-gray-900 mt-2">${club.name}</h3>
+              <p class="text-xs text-gray-500 mt-1">📍 동아리방: ${club.loc}</p>
+            </div>
+            <div class="mt-4 flex gap-2">
+              <a href="#" target="_blank" class="flex-1 py-1.5 bg-pink-500 text-white rounded-lg text-xs font-bold text-center hover:bg-pink-600 transition">인스타</a>
+              <a href="#" target="_blank" class="flex-1 py-1.5 bg-gray-800 text-white rounded-lg text-xs font-bold text-center hover:bg-gray-900 transition">신청서</a>
+            </div>
+          </div>
+        `;
+      });
 
       container.innerHTML = `
         <div class="text-center animate-fade-in">
           <div class="text-4xl mb-2">🎉</div>
-          <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full">${club.campus}캠퍼스 | ${club.category}분과</span>
-          <h2 class="text-3xl font-extrabold text-gray-900 mt-3 mb-1">${clubName}</h2>
-          <p class="text-sm font-semibold text-gray-500 mb-4">📍 동아리방: ${club.loc}</p>
+          <h2 class="text-2xl font-extrabold text-gray-900 mb-1">당신에게 이런 동아리들이 어울릴 것 같아요!</h2>
+          <p class="text-sm text-gray-500 mb-6">회원님의 성향 분석을 바탕으로 추천해 드리는 동아리 리스트입니다.</p>
           
-          <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-100 text-left mb-6">
-            <p class="text-xs text-emerald-600 font-bold mb-1">동아리 소개</p>
-            <p class="text-sm text-gray-700 leading-relaxed">${club.desc}</p>
+          <!-- 추천 동아리 3개 카드 그리드 배치 (가로 확장형태) -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left mb-6">
+            ${clubsHtml}
           </div>
 
-          <div class="bg-emerald-100 border border-emerald-300 p-3 rounded-xl mb-4 text-xs text-emerald-900">
+          <div class="bg-emerald-100 border border-emerald-300 p-3 rounded-xl mb-6 text-xs text-emerald-900">
             📸 <b>이 화면을 캡처해서</b> 총동아리연합회 부스로 오시면 이벤트 뽑기권/상품을 드립니다!
           </div>
 
-          <button onclick="renderStep1()" class="w-full py-3 bg-emerald-700 text-white rounded-xl font-bold hover:bg-emerald-800 transition shadow-md">
-            🔄 다시 검사하기
+          <button onclick="restartQuiz()" class="w-full py-3 bg-emerald-700 text-white rounded-xl font-bold hover:bg-emerald-800 transition shadow-md">
+            🔄 다시 테스트하기
           </button>
         </div>
       `;
     }
 
-    // 초록색 테마 CSS 스타일 적용
-    const style = document.createElement('style');
-    style.innerHTML = `
-      .opt-btn {
-        width: 100%;
-        text-align: left;
-        padding: 0.75rem 1rem;
-        background-color: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 0.75rem;
-        font-size: 0.875rem;
-        color: #334155;
-        font-weight: 500;
-        transition: all 0.2s;
-      }
-      .opt-btn:hover {
-        background-color: #dcfce7;
-        border-color: #4ade80;
-        color: #15803d;
-      }
-    `;
-    document.head.appendChild(style);
+    function restartQuiz() {
+      currentIdx = 0;
+      scores = { '체육': 0, '문화': 0, '봉사': 0, '종교': 0 };
+      renderQuestion();
+    }
 
-    // Initial render
-    renderStep1();
+    // 초기 실행
+    renderQuestion();
   </script>
 </body>
 </html>
