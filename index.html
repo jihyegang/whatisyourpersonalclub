@@ -15,7 +15,7 @@
   <!-- 배경 로고 (circle.PNG) -->
   <img src="circle.PNG" alt="건양대 로고" class="fixed left-[-8%] md:left-[-2%] top-1/2 -translate-y-1/2 w-[300px] md:w-[480px] opacity-80 pointer-events-none z-0">
 
-  <!-- 뀨 캐릭터 (kyu.png) -->
+  <!-- 뀨 캐릭터 (kyu.png) - 질문 진행 중에만 표시 -->
   <img id="kyu-character" src="kyu.png" alt="뀨" class="fixed right-[2%] md:right-[6%] bottom-[8%] md:bottom-[12%] w-[120px] md:w-[200px] pointer-events-none z-0 hidden transition-all duration-300">
 
   <!-- 메인 컨테이너 -->
@@ -54,55 +54,56 @@
   </div>
 
   <script>
+    // 문법 오류 원천 차단을 위해 일반 따옴표 및 <br> 태그 사용
     const clubDatabase = {
       '체육': [
-        { name: 'block', loc: '짐나지움 202', desc: `매주 논산과 대전 두 캠퍼스에서 현역 배구 선생님과 함께 배구 진행합니다! 초보자도 할 수 있어요!\n배구를 통해 좋은 인연을 만들고 함께 성장해 나갈 수 있도록 노력하겠습니다.` },
-        { name: 'MARS', loc: '짐나지움 313', desc: `동아리를 통한 건강 증진과 각종 대회 수상을 목표로 달려갑니다.` },
-        { name: 'NF', loc: '명곡의학관 B05', desc: `열정 가득한 잔디 위에서 펼쳐지는 축구 매치 및 교류 활동!` },
-        { name: 'RacketS', loc: '명곡의학관 B06', desc: `라켓 스포츠를 사랑하는 부원들과 활기찬 대학 생활을 만듭니다.` },
-        { name: '럭키즈', loc: '미정 (신규)', desc: `학교의 유일 야구동아리 럭키즈입니다! 야구를 좋아한다면 누구나, 언제나 환영입니다!\n훈련, 청백전, 타학교와의 교류전, 회식, mt 등 즐거운 동아리 생활을 할 수 있도록 노력하겠습니다.` },
-        { name: '런하이', loc: '미정 (신규)', desc: `서로 응원하며 희망을 향해 달리는 건강한 몸과 마음을 위한 러닝 동아리입니다.\n각자의 목표를 향해 달리며 각자에게 맞는 인생 페이스를 찾아가도록 돕겠습니다!` },
-        { name: '만두전골', loc: '미정 (가동아리)', desc: `주짓수 연합 훈련 및 실전 기술 습득으로 심신을 단련합니다.` },
-        { name: '볼매', loc: '미정 (가동아리)', desc: `핀을 쓰러뜨리는 쾌감과 볼링 실력 향상, 내적 친밀감 형성!` },
-        { name: '스매쉬', loc: '미정 (가동아리)', desc: `배드민턴 경기 규칙 이해와 스트레스 해소 및 건강 증진!` },
-        { name: '위스키', loc: '미정 (신규)', desc: `겨울마다 떠나는 신나는 스키 및 보드 액티비티 동아리입니다.` },
-        { name: '인터셉트', loc: '명곡의학관 B04', desc: `정기적인 농구 활동으로 체력 증진과 스트레스를 날려버립니다.` },
-        { name: '태산무언', loc: '미정 (가동아리)', desc: `유도의 기본 정신을 바탕으로 묵직한 한 판 승부와 심신 단련!` },
-        { name: '황검회', loc: '명곡의학관 B09', desc: `검도의 기본 정신을 바탕으로 바른 마음가짐과 체력을 기릅니다.` }
+        { name: 'block', loc: '짐나지움 202', desc: '매주 논산과 대전 두 캠퍼스에서 현역 배구 선생님과 함께 배구 진행합니다! 초보자도 할 수 있어요!<br>배구를 통해 좋은 인연을 만들고 함께 성장해 나갈 수 있도록 노력하겠습니다.' },
+        { name: 'MARS', loc: '짐나지움 313', desc: '동아리를 통한 건강 증진과 각종 대회 수상을 목표로 달려갑니다.' },
+        { name: 'NF', loc: '명곡의학관 B05', desc: '열정 가득한 잔디 위에서 펼쳐지는 축구 매치 및 교류 활동!' },
+        { name: 'RacketS', loc: '명곡의학관 B06', desc: '라켓 스포츠를 사랑하는 부원들과 활기찬 대학 생활을 만듭니다.' },
+        { name: '럭키즈', loc: '미정 (신규)', desc: '학교의 유일 야구동아리 럭키즈입니다! 야구를 좋아한다면 누구나, 언제나 환영입니다!<br>훈련, 청백전, 타학교와의 교류전, 회식 등 즐거운 동아리 생활을 할 수 있도록 노력하겠습니다.' },
+        { name: '런하이', loc: '미정 (신규)', desc: '서로 응원하며 희망을 향해 달리는 건강한 몸과 마음을 위한 러닝 동아리입니다.<br>각자의 목표를 향해 달리며 각자에게 맞는 인생 페이스를 찾아가도록 돕겠습니다!' },
+        { name: '만두전골', loc: '미정 (가동아리)', desc: '주짓수 연합 훈련 및 실전 기술 습득으로 심신을 단련합니다.' },
+        { name: '볼매', loc: '미정 (가동아리)', desc: '핀을 쓰러뜨리는 쾌감과 볼링 실력 향상, 내적 친밀감 형성!' },
+        { name: '스매쉬', loc: '미정 (가동아리)', desc: '배드민턴 경기 규칙 이해와 스트레스 해소 및 건강 증진!' },
+        { name: '위스키', loc: '미정 (신규)', desc: '겨울마다 떠나는 신나는 스키 및 보드 액티비티 동아리입니다.' },
+        { name: '인터셉트', loc: '명곡의학관 B04', desc: '정기적인 농구 활동으로 체력 증진과 스트레스를 날려버립니다.' },
+        { name: '태산무언', loc: '미정 (가동아리)', desc: '유도의 기본 정신을 바탕으로 묵직한 한 판 승부와 심신 단련!' },
+        { name: '황검회', loc: '명곡의학관 B09', desc: '검도의 기본 정신을 바탕으로 바른 마음가짐과 체력을 기릅니다.' }
       ],
       '문화': [
-        { name: 'HENNIS', loc: '짐나지움 318/319/320', desc: `음악 작업을 통한 창작 능력 향상 및 음원 제작 동아리.` },
-        { name: 'MUSE', loc: '명곡의학관 B02', desc: `합주 및 공연을 하며 대학 생활의 잊지 못할 낭만 추억 쌓기!` },
-        { name: 'RIP', loc: '미정', desc: `공연 준비 및 라이브 밴드 합주를 통해 끈끈한 친밀감 형성.` },
-        { name: '난공불락', loc: '명곡의학관 B08', desc: `공동의 관심사를 나누며 깊은 우정과 단합을 다집니다.` },
-        { name: '노말피플', loc: '명곡의학관 B03', desc: `목소리만으로 아름다운 하모니를 만들어내는 아카펠라 팀!` },
-        { name: '메디씨네', loc: '미정', desc: `함께 영화를 감상하고 나누며 다양한 시각과 친목을 도모합니다.` },
-        { name: '메타스타시스', loc: '명곡의학관 B06', desc: `강렬한 사운드의 밴드 합주와 무대 공연 준비 모임.` },
-        { name: '보들보들', loc: '명곡의학관 B10', desc: `다양한 보드게임을 즐기며 학업 스트레스를 싹 날려버리기!` },
-        { name: '일루션', loc: '짐나지움 204', desc: `즐겁게 그림그리며 교류하는 그림 동아리입니다!\n그림뿐만 아니라 만화, 애니 및 서브컬처도 편하게 교류해봐요!` },
-        { name: '제식이', loc: '짐나지움 207/208', desc: `서로 다른 목소리로 함께 웃고 노래하는 보컬팀 제식이입니다.\n무대 위에서 느끼는 즐거움과 진심이 전달되길 간절히 소망합니다.` },
-        { name: '주MONY', loc: '명곡의학관 B08', desc: `술을 줄이는 것도 더 즐거울 수 있다는 것을 보여주는 절주동아리입니다.\n즐거움을 직접 경험하고 나누며 건강한 음주 문화를 함께 만들어가요.` },
-        { name: '천지음', loc: '명곡의학관 B11', desc: `흥겨운 우리 가락 풍물을 통해 신나는 신체와 건강한 정신!` },
-        { name: '클레프', loc: '명곡의학관 B03', desc: `1995년 창설된 음자리표라는 뜻의 관현악 동아리입니다.\n음악을 향한 순수한 진심을 잃지 않고 감동을 나누기 위해 발전하겠습니다!` },
-        { name: '포토박스', loc: '짐나지움 302', desc: `카메라 사진 촬영 지식 습득 및 감성적인 편집 기술 배우기.` },
-        { name: '엉거크루', loc: '짐나지움 303', desc: `에너지 넘치는 댄스 퍼포먼스로 실력과 자존감 UP!` },
-        { name: '후룩', loc: '명곡의학관 B04', desc: `활력 넘치는 스트릿 댄스 라이프와 멋진 무대 공연!` }
+        { name: 'HENNIS', loc: '짐나지움 318/319/320', desc: '음악 작업을 통한 창작 능력 향상 및 음원 제작 동아리.' },
+        { name: 'MUSE', loc: '명곡의학관 B02', desc: '합주 및 공연을 하며 대학 생활의 잊지 못할 낭만 추억 쌓기!' },
+        { name: 'RIP', loc: '미정', desc: '공연 준비 및 라이브 밴드 합주를 통해 끈끈한 친밀감 형성.' },
+        { name: '난공불락', loc: '명곡의학관 B08', desc: '공동의 관심사를 나누며 깊은 우정과 단합을 다집니다.' },
+        { name: '노말피플', loc: '명곡의학관 B03', desc: '목소리만으로 아름다운 하모니를 만들어내는 아카펠라 팀!' },
+        { name: '메디씨네', loc: '미정', desc: '함께 영화를 감상하고 나누며 다양한 시각과 친목을 도모합니다.' },
+        { name: '메타스타시스', loc: '명곡의학관 B06', desc: '강렬한 사운드의 밴드 합주와 무대 공연 준비 모임.' },
+        { name: '보들보들', loc: '명곡의학관 B10', desc: '다양한 보드게임을 즐기며 학업 스트레스를 싹 날려버리기!' },
+        { name: '일루션', loc: '짐나지움 204', desc: '즐겁게 그림그리며 교류하는 그림 동아리입니다!<br>그림뿐만 아니라 만화, 애니 및 서브컬처도 편하게 교류해봐요!' },
+        { name: '제식이', loc: '짐나지움 207/208', desc: '서로 다른 목소리로 함께 웃고 노래하는 보컬팀 제식이입니다.<br>무대 위에서 느끼는 즐거움과 진심이 전달되길 간절히 소망합니다.' },
+        { name: '주MONY', loc: '명곡의학관 B08', desc: '술을 줄이는 것도 더 즐거울 수 있다는 것을 보여주는 절주동아리입니다.<br>즐거움을 직접 경험하고 나누며 건강한 음주 문화를 함께 만들어가요.' },
+        { name: '천지음', loc: '명곡의학관 B11', desc: '흥겨운 우리 가락 풍물을 통해 신나는 신체와 건강한 정신!' },
+        { name: '클레프', loc: '명곡의학관 B03', desc: '1995년 창설된 음자리표라는 뜻의 관현악 동아리입니다.<br>음악을 향한 순수한 진심을 잃지 않고 감동을 나누기 위해 발전하겠습니다!' },
+        { name: '포토박스', loc: '짐나지움 302', desc: '카메라 사진 촬영 지식 습득 및 감성적인 편집 기술 배우기.' },
+        { name: '엉거크루', loc: '짐나지움 303', desc: '에너지 넘치는 댄스 퍼포먼스로 실력과 자존감 UP!' },
+        { name: '후룩', loc: '명곡의학관 B04', desc: '활력 넘치는 스트릿 댄스 라이프와 멋진 무대 공연!' }
       ],
       '봉사': [
-        { name: '감염예방동아리', loc: '미정', desc: `지역사회와 협력하여 보건 건강 및 감염 예방 봉사 추진.` },
-        { name: '사랑의 RCY', loc: '명곡의학관 B07', desc: `봉사도 하고 학우들과 추억 쌓을 수 있는 사랑의 RCY입니다!\n봉사를 통해 행복을 느끼고 즐거운 추억을 쌓아갈 수 있도록 노력하겠습니다!` },
-        { name: '새마을봉사동아리', loc: '미정', desc: `타학과 학우들과 함께 따뜻한 마음을 나누는 새마을 봉사동아리입니다~\n혼자 힘들게 봉사활동 찾아다니지 말고 우리와 함께해봐요!` },
-        { name: '심봉사', loc: '명곡의학관 B11', desc: `정기적인 사회 봉사 참여 및 따뜻한 진료 봉사 교육 연계.` },
-        { name: '아름드리', loc: '명곡의학관 B05', desc: `오랜 역사와 전통을 이어오며 따뜻한 나눔을 실천하는 봉사동아리입니다!\n함께 봉사하고 웃으며 기억에 남는 시간을 만들어가요!` },
-        { name: '품앗이', loc: '짐나지움 314', desc: `지속적인 봉사활동을 통해 뿌듯한 보람과 성장을 도모.` }
+        { name: '감염예방동아리', loc: '미정', desc: '지역사회와 협력하여 보건 건강 및 감염 예방 봉사 추진.' },
+        { name: '사랑의 RCY', loc: '명곡의학관 B07', desc: '봉사도 하고 학우들과 추억 쌓을 수 있는 사랑의 RCY입니다!<br>봉사를 통해 행복을 느끼고 즐거운 추억을 쌓아갈 수 있도록 노력하겠습니다!' },
+        { name: '새마을봉사동아리', loc: '미정', desc: '타학과 학우들과 함께 따뜻한 마음을 나누는 새마을 봉사동아리입니다.<br>혼자 힘들게 봉사활동 찾아다니지 말고 우리와 함께해봐요!' },
+        { name: '심봉사', loc: '명곡의학관 B11', desc: '정기적인 사회 봉사 참여 및 따뜻한 진료 봉사 교육 연계.' },
+        { name: '아름드리', loc: '명곡의학관 B05', desc: '오랜 역사와 전통을 이어오며 따뜻한 나눔을 실천하는 봉사동아리입니다!<br>함께 봉사하고 웃으며 기억에 남는 시간을 만들어가요!' },
+        { name: '품앗이', loc: '짐나지움 314', desc: '지속적인 봉사활동을 통해 뿌듯한 보람과 성장을 도모.' }
       ],
       '종교': [
-        { name: 'CCC', loc: '짐나지움 316/317', desc: `논캠과 대캠이 전부 속한 중앙동아리이며, 함께 예배 드리고\n즐겁고 행복한 시간을 통해 하나님을 더 알아가는 선교단체입니다.` },
-        { name: 'CMF', loc: '명곡의학관 B12', desc: `신앙 성장을 돕고 따뜻한 사회를 만들어가는 모임.` },
-        { name: 'DFC', loc: '짐나지움 315', desc: `건전한 선교단체입니다! 마음의 평안과 위로가 필요할 때 든든한 버팀목이 되겠습니다.` },
-        { name: 'JDM', loc: '짐나지움 310', desc: `모든 민족을 그리스도의 제자 삼으라는 말씀으로 모인 선교단체입니다.\n쉼이 필요할 때 하나님의 사랑으로 위로받으시길 기도합니다!` },
-        { name: 'LUX', loc: '명곡의학관 203', desc: `바쁜 일상 속 잠시 쉬어가며 신앙으로 함께하는 가톨릭 동아리입니다!\n서로에게 작은 위로와 힘이 되어주는 룩스를 만들어가겠습니다!` },
-        { name: '에파타', loc: '짐나지움 321', desc: `마음을 열고 신앙으로 함께하는 가톨릭 동아리입니다.\n열린 마음으로 만나 서로 이해하고 힘이 되어요!` }
+        { name: 'CCC', loc: '짐나지움 316/317', desc: '논캠과 대캠이 전부 속한 중앙동아리이며, 함께 예배 드리고<br>즐겁고 행복한 시간을 통해 하나님을 더 알아가는 선교단체입니다.' },
+        { name: 'CMF', loc: '명곡의학관 B12', desc: '신앙 성장을 돕고 따뜻한 사회를 만들어가는 모임.' },
+        { name: 'DFC', loc: '짐나지움 315', desc: '건전한 선교단체입니다! 마음의 평안과 위로가 필요할 때 든든한 버팀목이 되겠습니다.' },
+        { name: 'JDM', loc: '짐나지움 310', desc: '모든 민족을 그리스도의 제자 삼으라는 말씀으로 모인 선교단체입니다.<br>쉼이 필요할 때 하나님의 사랑으로 위로받으시길 기도합니다!' },
+        { name: 'LUX', loc: '명곡의학관 203', desc: '바쁜 일상 속 잠시 쉬어가며 신앙으로 함께하는 가톨릭 동아리입니다!<br>서로에게 작은 위로와 힘이 되어주는 룩스를 만들어가겠습니다!' },
+        { name: '에파타', loc: '짐나지움 321', desc: '마음을 열고 신앙으로 함께하는 가톨릭 동아리입니다.<br>열린 마음으로 만나 서로 이해하고 힘이 되어요!' }
       ]
     };
 
@@ -119,7 +120,7 @@
       {
         q: "Q2. 새로운 모임이나 그룹에 들어갔을 때 당신의 모습은?",
         options: [
-          { text: "먼저 분위기를 주도하며 사람들을 끌어모은다.", type: "체육" },
+          { text: "먼저 분위기를 주도하며 사람들을 끌어모는다.", type: "체육" },
           { text: "조용히 관찰하다가 친해진 몇몇과 깊게 교류한다.", type: "문화" },
           { text: "모두가 즐거울 수 있도록 뒤에서 묵묵히 지원하고 챙겨준다.", type: "봉사" },
           { text: "공통의 목표나 미션이 주어졌을 때 열정이 타오른다.", type: "종교" }
@@ -164,10 +165,10 @@
       {
         q: "Q7. 낯선 사람과 대화할 때 당신이 주로 건네는 말은?",
         options: [
-          { text: "\"요즘 운동이나 활동적인 거 하시는 거 있으세요?\"", type: "체육" },
-          { text: "\"혹시 어떤 음악/장르 좋아하세요?\"", type: "문화" },
-          { text: "\"오늘 저녁에 맛있는 거 먹으러 갈래요?\"", type: "문화" },
-          { text: "\"요즘 고민이나 힘든 일은 없으세요?\"", type: "봉사" }
+          { text: "요즘 운동이나 활동적인 거 하시는 거 있으세요?", type: "체육" },
+          { text: "혹시 어떤 음악/장르 좋아하세요?", type: "문화" },
+          { text: "오늘 저녁에 맛있는 거 먹으러 갈래요?", type: "문화" },
+          { text: "요즘 고민이나 힘든 일은 없으세요?", type: "봉사" }
         ]
       },
       {
@@ -301,13 +302,13 @@
       const date = String(now.getDate()).padStart(2, '0');
       const hours = String(now.getHours()).padStart(2, '0');
       const minutes = String(now.getMinutes()).padStart(2, '0');
-      const timeString = `${month}/${date} ${hours}:${minutes}`;
+      const timeString = month + '/' + date + ' ' + hours + ':' + minutes;
 
       const newRecord = {
         name: userInfo.name,
         studentId: userInfo.studentId,
         topCategory: topCategory,
-        recommendedClubs: selectedClubs.map(c => c.name).join(', '),
+        recommendedClubs: selectedClubs.map(function(c) { return c.name; }).join(', '),
         date: timeString
       };
 
@@ -326,7 +327,7 @@
       if (!quizContainer) return;
       quizContainer.className = "w-full";
 
-      let sortedCategories = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
+      let sortedCategories = Object.keys(scores).sort(function(a, b) { return scores[b] - scores[a]; });
       let topCategory = sortedCategories[0];
       let secondCategory = sortedCategories[1];
 
@@ -335,13 +336,13 @@
         recommendedClubs = recommendedClubs.concat(clubDatabase[secondCategory]);
       }
       
-      recommendedClubs.sort(() => 0.5 - Math.random());
+      recommendedClubs.sort(function() { return 0.5 - Math.random(); });
       let selectedClubs = recommendedClubs.slice(0, 3);
 
       saveResultToLocal(selectedClubs, topCategory);
 
       let clubsHtml = '';
-      selectedClubs.forEach(club => {
+      selectedClubs.forEach(function(club) {
         clubsHtml += `
           <div class="bg-emerald-50/70 p-5 md:p-6 rounded-2xl border border-emerald-200/80 flex flex-col justify-between shadow-sm hover:shadow-md transition">
             <div>
@@ -351,7 +352,7 @@
               <h3 class="text-xl font-extrabold text-gray-900 mb-1">${club.name}</h3>
               <p class="text-xs font-semibold text-emerald-700 mb-3">📍 ${club.loc}</p>
               
-              <p class="text-xs md:text-sm text-gray-600 leading-relaxed bg-white/80 p-3 rounded-xl border border-emerald-100 mb-4 whitespace-pre-line">
+              <p class="text-xs md:text-sm text-gray-600 leading-relaxed bg-white/80 p-3 rounded-xl border border-emerald-100 mb-4">
                 ${club.desc}
               </p>
             </div>
@@ -412,15 +413,15 @@
       }
 
       let csvContent = "\uFEFF이름,학번,추천분과,추천동아리목록,참여일시\n";
-      data.forEach(row => {
-        csvContent += `"${row.name}","${row.studentId}","${row.topCategory}","${row.recommendedClubs}","${row.date}"\n`;
+      data.forEach(function(row) {
+        csvContent += '"' + row.name + '","' + row.studentId + '","' + row.topCategory + '","' + row.recommendedClubs + '","' + row.date + '"\n';
       });
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.setAttribute("href", url);
-      link.setAttribute("download", `건양대_동아리추천_결과모음_${new Date().toISOString().slice(0,10)}.csv`);
+      link.setAttribute("download", "건양대_동아리추천_결과모음_" + new Date().toISOString().slice(0,10) + ".csv");
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -436,4 +437,15 @@
 
       if (confirm('수집된 응답 데이터를 정말 초기화하시겠습니까? (복구 불가)')) {
         localStorage.removeItem('club_quiz_results');
-        alert('데이터가 초기
+        alert('데이터가 초기화되었습니다.');
+        updateDataCount();
+      }
+    }
+
+    // 웹페이지 로딩 완료 시 최초 실행
+    window.onload = function() {
+      renderStartForm();
+    };
+  </script>
+</body>
+</html>
