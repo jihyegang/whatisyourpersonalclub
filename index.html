@@ -12,7 +12,7 @@
 </head>
 <body class="bg-emerald-50 min-h-screen flex items-center justify-center p-4 md:p-8">
 
-  <!-- 메인 컨테이너 너비를 max-w-4xl로 대폭 확대하여 소개글 공간 확보 -->
+  <!-- 메인 컨테이너 -->
   <div id="main-card" class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden p-6 md:p-10 relative transition-all duration-300">
     
     <!-- Header -->
@@ -21,20 +21,36 @@
       <h1 class="text-2xl md:text-4xl font-extrabold text-gray-800 mt-3">🎯 나에게 딱 맞는<br class="md:hidden"> 동아리 찾기</h1>
     </div>
 
-    <!-- Progress Bar -->
-    <div id="progress-wrapper" class="w-full bg-gray-200 h-2.5 rounded-full mb-8 overflow-hidden max-w-xl mx-auto">
+    <!-- Progress Bar (시작화면/결과화면에서는 숨김) -->
+    <div id="progress-wrapper" class="w-full bg-gray-200 h-2.5 rounded-full mb-8 overflow-hidden max-w-xl mx-auto hidden">
       <div id="progress" class="bg-emerald-500 h-full w-[11%] transition-all duration-300"></div>
     </div>
 
     <!-- Dynamic Content Area -->
     <div id="quiz-container" class="max-w-2xl mx-auto">
-      <!-- Questions & Results will be rendered here dynamically -->
+      <!-- Start Form, Questions & Results will be rendered here dynamically -->
+    </div>
+
+    <!-- 관리자 엑셀 다운로드 푸터 영역 -->
+    <div class="mt-8 pt-4 border-t border-gray-100 text-center text-xs text-gray-400">
+      <button onclick="toggleAdminPanel()" class="hover:underline text-gray-400">🔒 관리자 데이터 관리</button>
+      <div id="admin-panel" class="hidden mt-3 p-4 bg-gray-50 rounded-2xl border border-gray-200 max-w-md mx-auto text-left text-gray-700">
+        <p class="font-bold mb-2">📊 수집된 응답 데이터 (<span id="data-count">0</span>건)</p>
+        <div class="flex gap-2 mb-2">
+          <input type="password" id="admin-pw" placeholder="관리자 비밀번호 (기본: 1234)" class="w-full p-2 text-xs border border-gray-300 rounded-lg">
+          <button onclick="downloadCSV()" class="px-3 py-2 bg-emerald-600 text-white font-bold rounded-lg whitespace-nowrap hover:bg-emerald-700">엑셀 다운로드</button>
+        </div>
+        <div class="flex justify-between items-center text-[11px] text-gray-500">
+          <span>* 엑셀(CSV) 한글 깨짐 방지 포함</span>
+          <button onclick="clearData()" class="text-red-500 hover:underline">데이터 초기화</button>
+        </div>
+      </div>
     </div>
 
   </div>
 
   <script>
-    // 동아리 DB (문법 오류 및 줄바꿈 문제 해결 완료)
+    // 동아리 DB
     const clubDatabase = {
       '체육': [
         { name: 'block', loc: '짐나지움 202', desc: '매주 논산과 대전 두 캠퍼스에서 현역 배구 선생님과 함께 배구 진행합니다! 초보자도 할 수 있어요! \n배구를 통해 좋은 인연을 만들고 함께 성장해 나갈 수 있도록 노력하겠습니다.' },
@@ -64,7 +80,7 @@
         { name: '제식이', loc: '짐나지움 207/208', desc: '서로 다른 목소리로 함께 웃고 노래하는 우리, 여러분의 마음을 움직이는 보컬팀, 제식이입니다. \n저희가 무대 위에서 느끼는 즐거움과 진심이 여러분께도 전해져, 마음껏 웃고 울고 설레는 순간으로 기억되길 간절히 소망합니다.' },
         { name: '주MONY', loc: '명곡의학관 B08', desc: '술을 줄이는 것도 오히려 더 즐거울 수 있다는 것을 보여주는 절주동아리입니다. \n술이 아니어도 사람과 사람 사이의 즐거움은 충분히 채워질 수 있다는 걸 직접 경험하고 나누며 건강한 음주 문화를 함께 만들어가요.' },
         { name: '천지음', loc: '명곡의학관 B11', desc: '흥겨운 우리 가락 풍물을 통해 신나는 신체와 건강한 정신!' },
-        { name: '클레프', loc: '명곡의학관 B03', desc: '1995년 창설된 ' + '음자리표' + '라는 뜻의 관현악 동아리입니다.\n음악을 향한 순수한 진심을 잃지 않고, 더 깊은 감동을 나누기 위해 발전해나가겠습니다!' },
+        { name: '클레프', loc: '명곡의학관 B03', desc: '1995년 창설된 음자리표라는 뜻의 관현악 동아리입니다.\n음악을 향한 순수한 진심을 잃지 않고, 더 깊은 감동을 나누기 위해 발전해나가겠습니다!' },
         { name: '포토박스', loc: '짐나지움 302', desc: '카메라 사진 촬영 지식 습득 및 감성적인 편집 기술 배우기.' },
         { name: '엉거크루', loc: '짐나지움 303', desc: '에너지 넘치는 댄스 퍼포먼스로 실력과 자존감 UP!' },
         { name: '후룩', loc: '명곡의학관 B04', desc: '활력 넘치는 스트릿 댄스 라이프와 멋진 무대 공연!' }
@@ -174,6 +190,54 @@
 
     let currentIdx = 0;
     let scores = { '체육': 0, '문화': 0, '봉사': 0, '종교': 0 };
+    let userInfo = { name: '', studentId: '' };
+
+    // 화면 1: 이름/학번 입력 시작 화면
+    function renderStartForm() {
+      document.getElementById('progress-wrapper').style.display = 'none';
+      const quizContainer = document.getElementById('quiz-container');
+      quizContainer.className = "max-w-md mx-auto";
+
+      quizContainer.innerHTML = `
+        <div class="bg-emerald-50/60 p-6 md:p-8 rounded-2xl border border-emerald-100 text-left">
+          <h2 class="text-xl font-bold text-gray-800 mb-2 text-center">👋 반갑습니다!</h2>
+          <p class="text-xs text-gray-500 mb-6 text-center">이벤트 참여 및 추천 결과 확인을 위해 정보를 입력해 주세요.</p>
+          
+          <div class="space-y-4 mb-6">
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">이름</label>
+              <input type="text" id="user-name" placeholder="홍길동" class="w-full p-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-emerald-500">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-gray-700 mb-1">학번</label>
+              <input type="text" id="user-id" placeholder="20261234" class="w-full p-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-emerald-500">
+            </div>
+          </div>
+
+          <button onclick="startQuiz()" class="w-full py-3.5 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition shadow-md text-base">
+            동아리 추천 테스트 시작하기 ✨
+          </button>
+        </div>
+      `;
+      updateDataCount();
+    }
+
+    function startQuiz() {
+      const nameInput = document.getElementById('user-name').value.trim();
+      const idInput = document.getElementById('user-id').value.trim();
+
+      if (!nameInput || !idInput) {
+        alert('이름과 학번을 모두 입력해 주세요!');
+        return;
+      }
+
+      userInfo.name = nameInput;
+      userInfo.studentId = idInput;
+      currentIdx = 0;
+      scores = { '체육': 0, '문화': 0, '봉사': 0, '종교': 0 };
+
+      renderQuestion();
+    }
 
     function updateProgress() {
       const percent = ((currentIdx + 1) / questions.length) * 100;
@@ -217,6 +281,25 @@
       renderQuestion();
     }
 
+    // 데이터 로컬스토리지 저장
+    function saveResultToLocal(selectedClubs, topCategory) {
+      const existingData = JSON.parse(localStorage.getItem('club_quiz_results') || '[]');
+      const now = new Date();
+      const timeString = `${now.getFullYear()}-${now.getMonth()+1}-${now.getDate()} ${now.getHours()}:${now.getMinutes()}`;
+
+      const newRecord = {
+        name: userInfo.name,
+        studentId: userInfo.studentId,
+        topCategory: topCategory,
+        recommendedClubs: selectedClubs.map(c => c.name).join(', '),
+        date: timeString
+      };
+
+      existingData.push(newRecord);
+      localStorage.setItem('club_quiz_results', JSON.stringify(existingData));
+      updateDataCount();
+    }
+
     function showResult() {
       document.getElementById('progress-wrapper').style.display = 'none';
 
@@ -235,6 +318,9 @@
       recommendedClubs.sort(() => 0.5 - Math.random());
       let selectedClubs = recommendedClubs.slice(0, 3);
 
+      // 데이터 저장 실행
+      saveResultToLocal(selectedClubs, topCategory);
+
       let clubsHtml = '';
       selectedClubs.forEach(club => {
         clubsHtml += `
@@ -246,7 +332,6 @@
               <h3 class="text-xl font-extrabold text-gray-900 mb-1">${club.name}</h3>
               <p class="text-xs font-semibold text-emerald-700 mb-3">📍 ${club.loc}</p>
               
-              <!-- whitespace-pre-line으로 \n 줄바꿈 적용 -->
               <p class="text-xs md:text-sm text-gray-600 leading-relaxed bg-white/80 p-3 rounded-xl border border-emerald-100 mb-4 whitespace-pre-line">
                 ${club.desc}
               </p>
@@ -263,8 +348,8 @@
       quizContainer.innerHTML = `
         <div class="text-center animate-fade-in">
           <div class="text-5xl mb-3">🎉</div>
-          <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">당신에게 이런 동아리들이 어울릴 것 같아요!</h2>
-          <p class="text-sm md:text-base text-gray-500 mb-8">회원님의 성향 분석을 바탕으로 추천해 드리는 동아리 리스트입니다.</p>
+          <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-1"><b>${userInfo.name}</b>님에게 어울리는 동아리!</h2>
+          <p class="text-sm md:text-base text-gray-500 mb-8">학번(${userInfo.studentId}) 성향 분석 기반 추천 동아리 리스트입니다.</p>
           
           <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-left mb-8">
             ${clubsHtml}
@@ -274,20 +359,71 @@
             📸 <b>이 화면을 캡처해서</b> 총동아리연합회 부스로 오시면 이벤트 뽑기권/상품을 드립니다!
           </div>
 
-          <button onclick="restartQuiz()" class="w-full max-w-md mx-auto block py-3.5 bg-emerald-700 text-white rounded-2xl font-bold hover:bg-emerald-800 transition shadow-lg text-base">
-            🔄 다시 테스트하기
+          <button onclick="renderStartForm()" class="w-full max-w-md mx-auto block py-3.5 bg-emerald-700 text-white rounded-2xl font-bold hover:bg-emerald-800 transition shadow-lg text-base">
+            🔄 다른 학우 테스트하기
           </button>
         </div>
       `;
     }
 
-    function restartQuiz() {
-      currentIdx = 0;
-      scores = { '체육': 0, '문화': 0, '봉사': 0, '종교': 0 };
-      renderQuestion();
+    // --- 관리자 데이터 다운로드 관련 함수 ---
+    function toggleAdminPanel() {
+      const panel = document.getElementById('admin-panel');
+      panel.classList.toggle('hidden');
+      updateDataCount();
     }
 
-    renderQuestion();
+    function updateDataCount() {
+      const data = JSON.parse(localStorage.getItem('club_quiz_results') || '[]');
+      const countEl = document.getElementById('data-count');
+      if (countEl) countEl.innerText = data.length;
+    }
+
+    function downloadCSV() {
+      const pw = document.getElementById('admin-pw').value;
+      if (pw !== '1234') { // 기본 비밀번호: 1234
+        alert('관리자 비밀번호가 틀렸습니다!');
+        return;
+      }
+
+      const data = JSON.parse(localStorage.getItem('club_quiz_results') || '[]');
+      if (data.length === 0) {
+        alert('수집된 데이터가 없습니다.');
+        return;
+      }
+
+      // CSV 파일 헤더 및 내용 생성 (BOM 추가로 한글 깨짐 방지)
+      let csvContent = "\uFEFF이름,학번,추천분과,추천동아리목록,참여일시\n";
+      data.forEach(row => {
+        csvContent += `"${row.name}","${row.studentId}","${row.topCategory}","${row.recommendedClubs}","${row.date}"\n`;
+      });
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", `건양대_동아리추천_결과모음_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function clearData() {
+      const pw = document.getElementById('admin-pw').value;
+      if (pw !== '1234') {
+        alert('관리자 비밀번호가 틀렸습니다!');
+        return;
+      }
+
+      if (confirm('수집된 응답 데이터를 정말 초기화하시겠습니까? (복구 불가)')) {
+        localStorage.removeItem('club_quiz_results');
+        alert('데이터가 초기화되었습니다.');
+        updateDataCount();
+      }
+    }
+
+    // 최초 실행 (시작 폼 출력)
+    renderStartForm();
   </script>
 </body>
 </html>
