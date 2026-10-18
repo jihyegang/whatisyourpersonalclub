@@ -10,84 +10,84 @@
     body { font-family: 'Pretendard', sans-serif; }
   </style>
 </head>
-<body class="bg-emerald-50 min-h-screen flex items-center justify-center p-4">
+<body class="bg-emerald-50 min-h-screen flex items-center justify-center p-4 md:p-8">
 
-  <!-- 결과 화면에서 여유롭게 보일 수 있도록 max-w-2xl로 너비 확장 -->
-  <div id="main-card" class="w-full max-w-2xl bg-white rounded-2xl shadow-xl overflow-hidden p-8 relative transition-all duration-300">
+  <!-- 메인 컨테이너 너비를 max-w-4xl로 대폭 확대하여 소개글 공간 확보 -->
+  <div id="main-card" class="w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden p-6 md:p-10 relative transition-all duration-300">
     
     <!-- Header -->
     <div class="text-center mb-8">
-      <span class="text-xs font-semibold bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full">2026 건양대학교 한솔대동제</span>
-      <h1 class="text-3xl font-bold text-gray-800 mt-2">🎯 나에게 딱 맞는<br>동아리 찾기</h1>
+      <span class="text-xs md:text-sm font-semibold bg-emerald-100 text-emerald-700 px-3.5 py-1.5 rounded-full">2026 건양대학교 한솔대동제</span>
+      <h1 class="text-2xl md:text-4xl font-extrabold text-gray-800 mt-3">🎯 나에게 딱 맞는<br class="md:hidden"> 동아리 찾기</h1>
     </div>
 
     <!-- Progress Bar -->
-    <div id="progress-wrapper" class="w-full bg-gray-200 h-2 rounded-full mb-8 overflow-hidden">
+    <div id="progress-wrapper" class="w-full bg-gray-200 h-2.5 rounded-full mb-8 overflow-hidden max-w-xl mx-auto">
       <div id="progress" class="bg-emerald-500 h-full w-[11%] transition-all duration-300"></div>
     </div>
 
     <!-- Dynamic Content Area -->
-    <div id="quiz-container">
+    <div id="quiz-container" class="max-w-2xl mx-auto">
       <!-- Questions & Results will be rendered here dynamically -->
     </div>
 
   </div>
 
   <script>
-    // 제공된 이미지 데이터를 기반으로 정리한 동아리 DB (소울메이트 제외)[cite: 1]
+    // 동아리 DB (소개 문구 'desc'를 작성할 수 있도록 구조 반영)
     const clubDatabase = {
       '체육': [
-        { name: 'block', loc: '짐나지움 202' },
-        { name: 'MARS', loc: '짐나지움 313' },
-        { name: 'NF', loc: '명곡의학관 B05' },
-        { name: 'RacketS', loc: '명곡의학관 B06' },
-        { name: '럭키즈', loc: '미정 (신규)' },
-        { name: '런하이', loc: '미정 (신규)' },
-        { name: '만두전골', loc: '미정 (가동아리)' },
-        { name: '볼매', loc: '미정 (가동아리)' },
-        { name: '스매쉬', loc: '미정 (가동아리)' },
-        { name: '위스키', loc: '미정 (신규)' },
-        { name: '인터셉트', loc: '명곡의학관 B04' },
-        { name: '태산무언', loc: '미정 (가동아리)' },
-        { name: '황검회', loc: '명곡의학관 B09' }
+        { name: 'block', loc: '짐나지움 202', desc: '학교 스포츠 문화의 발전을 이끄는 전통 체육 동아리입니다.' },
+        { name: 'MARS', loc: '짐나지움 313', desc: '동아리를 통한 건강 증진과 각종 대회 수상을 목표로 달려갑니다.' },
+        { name: 'NF', loc: '명곡의학관 B05', desc: '열정 가득한 잔디 위에서 펼쳐지는 축구 매치 및 교류 활동!' },
+        { name: 'RacketS', loc: '명곡의학관 B06', desc: '라켓 스포츠를 사랑하는 부원들과 활기찬 대학 생활을 만듭니다.' },
+        { name: '럭키즈', loc: '미정 (신규)', desc: '홈런을 노리는 아마추어 야구팀! 야구를 좋아하는 누구나 환영합니다.' },
+        { name: '런하이', loc: '미정 (신규)', desc: '함께 바람을 가르며 달리는 러닝 활동으로 체력과 협동심 함양!' },
+        { name: '만두전골', loc: '미정 (가동아리)', desc: '주짓수 연합 훈련 및 실전 기술 습득으로 심신을 단련합니다.' },
+        { name: '볼매', loc: '미정 (가동아리)', desc: '핀을 쓰러뜨리는 쾌감과 볼링 실력 향상, 내적 친밀감 형성!' },
+        { name: '스매쉬', loc: '미정 (가동아리)', desc: '배드민턴 경기 규칙 이해와 스트레스 해소 및 건강 증진!' },
+        { name: '위스키', loc: '미정 (신규)', desc: '겨울마다 떠나는 신나는 스키 및 보드 액티비티 동아리입니다.' },
+        { name: '인터셉트', loc: '명곡의학관 B04', desc: '정기적인 농구 활동으로 체력 증진과 스트레스를 날려버립니다.' },
+        { name: '태산무언', loc: '미정 (가동아리)', desc: '유도의 기본 정신을 바탕으로 묵직한 한 판 승부와 심신 단련!' },
+        { name: '황검회', loc: '명곡의학관 B09', desc: '검도의 기본 정신을 바탕으로 바른 마음가짐과 체력을 기릅니다.' }
       ],
       '문화': [
-        { name: 'HENNIS', loc: '짐나지움 318/319/320' },
-        { name: 'MUSE', loc: '명곡의학관 B02' },
-        { name: 'RIP', loc: '미정' },
-        { name: '난공불락', loc: '명곡의학관 B08' },
-        { name: '노말피플', loc: '명곡의학관 B03' },
-        { name: '메디씨네', loc: '미정' },
-        { name: '메타스타시스', loc: '명곡의학관 B06' },
-        { name: '보들보들', loc: '명곡의학관 B10' },
-        { name: '일루션', loc: '짐나지움 204' },
-        { name: '제식이', loc: '짐나지움 207/208' },
-        { name: '주MONY', loc: '명곡의학관 B08' },
-        { name: '천지음', loc: '명곡의학관 B11' },
-        { name: '클레프', loc: '명곡의학관 B03' },
-        { name: '포토박스', loc: '짐나지움 302' },
-        { name: '엉거크루', loc: '짐나지움 303' },
-        { name: '후룩', loc: '명곡의학관 B04' }
+        { name: 'HENNIS', loc: '짐나지움 318/319/320', desc: '음악 작업을 통한 창작 능력 향상 및 음원 제작 동아리.' },
+        { name: 'MUSE', loc: '명곡의학관 B02', desc: '합주 및 공연을 하며 대학 생활의 잊지 못할 낭만 추억 쌓기!' },
+        { name: 'RIP', loc: '미정', desc: '공연 준비 및 라이브 밴드 합주를 통해 끈끈한 친밀감 형성.' },
+        { name: '난공불락', loc: '명곡의학관 B08', desc: '공동의 관심사를 나누며 깊은 우정과 단합을 다집니다.' },
+        { name: '노말피플', loc: '명곡의학관 B03', desc: '목소리만으로 아름다운 하모니를 만들어내는 아카펠라 팀!' },
+        { name: '메디씨네', loc: '미정', desc: '함께 영화를 감상하고 나누며 다양한 시각과 친목을 도모합니다.' },
+        { name: '메타스타시스', loc: '명곡의학관 B06', desc: '강렬한 사운드의 밴드 합주와 무대 공연 준비 모임.' },
+        { name: '보들보들', loc: '명곡의학관 B10', desc: '다양한 보드게임을 즐기며 학업 스트레스를 싹 날려버리기!' },
+        { name: '일루션', loc: '짐나지움 204', desc: '그림과 미술 작품 활동을 통해 문화적 교류를 함께합니다.' },
+        { name: '제식이', loc: '짐나지움 207/208', desc: '서로 다른 목소리로 감동과 즐거움을 선사하는 보컬 동아리!' },
+        { name: '주MONY', loc: '명곡의학관 B08', desc: '건전하고 즐거운 음주 문화 정착 및 예방 캠페인 활동.' },
+        { name: '천지음', loc: '명곡의학관 B11', desc: '흥겨운 우리 가락 풍물을 통해 신나는 신체와 건강한 정신!' },
+        { name: '클레프', loc: '명곡의학관 B03', desc: '다양한 악기 연주 실력 향상과 클래식/세션 합주 활동.' },
+        { name: '포토박스', loc: '짐나지움 302', desc: '카메라 사진 촬영 지식 습득 및 감성적인 편집 기술 배우기.' },
+        { name: '엉거크루', loc: '짐나지움 303', desc: '에너지 넘치는 댄스 퍼포먼스로 실력과 자존감 UP!' },
+        { name: '후룩', loc: '명곡의학관 B04', desc: '활력 넘치는 스트릿 댄스 라이프와 멋진 무대 공연!' }
       ],
       '봉사': [
-        { name: '감염예방동아리', loc: '미정' },
-        { name: '사랑의 RCY', loc: '명곡의학관 B07' },
-        { name: '새마을봉사동아리', loc: '미정' },
-        { name: '심봉사', loc: '명곡의학관 B11' },
-        { name: '아름드리', loc: '명곡의학관 B05' },
-        { name: '품앗이', loc: '짐나지움 314' }
+        { name: '감염예방동아리', loc: '미정', desc: '지역사회와 협력하여 보건 건강 및 감염 예방 봉사 추진.' },
+        { name: '사랑의 RCY', loc: '명곡의학관 B07', desc: '적십자 인도주의 이념을 실천하는 다채로운 나눔 활동.' },
+        { name: '새마을봉사동아리', loc: '미정', desc: '살기 좋은 나눔 공동체를 만드는 건강한 봉사 문화 조성.' },
+        { name: '심봉사', loc: '명곡의학관 B11', desc: '정기적인 사회 봉사 참여 및 따뜻한 진료 봉사 교육 연계.' },
+        { name: '아름드리', loc: '명곡의학관 B05', desc: '부원 간 협력을 통해 따뜻한 사회적 연대감과 나눔 형성.' },
+        { name: '품앗이', loc: '짐나지움 314', desc: '지속적인 봉사활동을 통해 뿌듯한 보람과 성장을 도모.' }
       ],
       '종교': [
-        { name: 'CCC', loc: '짐나지움 316/317' },
-        { name: 'CMF', loc: '명곡의학관 B12' },
-        { name: 'DFC', loc: '짐나지움 315' },
-        { name: 'JDM', loc: '짐나지움 310' },
-        { name: 'LUX(룩스)', loc: '명곡의학관 203' },
-        { name: '에파타', loc: '짐나지움 321' }
+        { name: 'CCC', loc: '짐나지움 316/317', desc: '캠퍼스에서 따뜻한 사랑과 선교를 전하는 공동체.' },
+        { name: 'CMF', loc: '명곡의학관 B12', desc: '신앙 성장을 돕고 따뜻한 사회를 만들어가는 모임.' },
+        { name: 'DFC', loc: '짐나지움 315', desc: '캠퍼스 선교를 목표로 서로 도우며 성장하는 청년 모임.' },
+        { name: 'JDM', loc: '짐나지움 310', desc: '복음 전파 및 리더십 훈련을 통해 바로 서는 모임.' },
+        { name: 'LUX(룩스)', loc: '명곡의학관 203', desc: '건강한 몸과 마음을 기르며 신앙심을 키워나가는 모임.' },
+        { name: '에파타', loc: '짐나지움 321', desc: '천주교 신자 교우들의 신앙 고취 및 따뜻한 친목 모임.' }
       ]
     };
 
-    // 9개의 질문 데이터 (A: 체육, B: 문화, C: 친목/문화, D: 봉사)
+    // 9개 질문 데이터
     const questions = [
       {
         q: "Q1. 금요일 마지막 수업이 끝난 후, 당신이 꿈꾸는 완벽한 저녁은?",
@@ -181,6 +181,9 @@
     }
 
     function renderQuestion() {
+      const quizContainer = document.getElementById('quiz-container');
+      quizContainer.className = "max-w-2xl mx-auto"; // 질문 진행 중에는 중앙 정렬 폭 유지
+
       document.getElementById('progress-wrapper').style.display = 'block';
       if (currentIdx >= questions.length) {
         showResult();
@@ -189,20 +192,19 @@
 
       updateProgress();
       const qData = questions[currentIdx];
-      const container = document.getElementById('quiz-container');
 
       let optionsHtml = '';
       qData.options.forEach((opt) => {
         optionsHtml += `
-          <button onclick="handleAnswer('${opt.type}')" class="w-full text-left p-4 bg-gray-50 border border-gray-200 rounded-xl font-medium text-gray-700 hover:bg-emerald-50 hover:border-emerald-400 hover:text-emerald-700 transition text-base">
+          <button onclick="handleAnswer('${opt.type}')" class="w-full text-left p-4 bg-gray-50 border border-gray-200 rounded-2xl font-medium text-gray-700 hover:bg-emerald-50 hover:border-emerald-400 hover:text-emerald-700 transition text-base md:text-lg shadow-sm">
             ${opt.text}
           </button>
         `;
       });
 
-      container.innerHTML = `
+      quizContainer.innerHTML = `
         <span class="text-sm font-bold text-emerald-600 mb-2 block">QUESTION ${currentIdx + 1} / ${questions.length}</span>
-        <h2 class="text-xl font-bold text-gray-800 mb-6">${qData.q}</h2>
+        <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-6 leading-snug">${qData.q}</h2>
         <div class="space-y-3">
           ${optionsHtml}
         </div>
@@ -216,60 +218,67 @@
     }
 
     function showResult() {
-      // 결과 화면 진입 시 진행바 숨김 및 컨테이너 넓이 확장 연출 가능
       document.getElementById('progress-wrapper').style.display = 'none';
 
-      // 점수가 가장 높은 상위 2개 분과 추출 (또는 1위 분과 중심)
+      const quizContainer = document.getElementById('quiz-container');
+      quizContainer.className = "w-full"; // 결과창에서는 전체 폭 활용
+
       let sortedCategories = Object.keys(scores).sort((a, b) => scores[b] - scores[a]);
       let topCategory = sortedCategories[0];
       let secondCategory = sortedCategories[1];
 
-      // 해당 분과의 동아리 목록 가져오기 (각 분과에서 무작위 혹은 최대 3~4개 선별)
       let recommendedClubs = [...clubDatabase[topCategory]];
-      // 만약 동아리가 부족하면 두 번째 분과에서도 일부 가져오기
       if (recommendedClubs.length < 3) {
         recommendedClubs = recommendedClubs.concat(clubDatabase[secondCategory]);
       }
       
-      // 랜덤하게 섞어서 3개 정도만 추리기
+      // 랜덤 추출 (3개)
       recommendedClubs.sort(() => 0.5 - Math.random());
       let selectedClubs = recommendedClubs.slice(0, 3);
-
-      const container = document.getElementById('quiz-container');
 
       let clubsHtml = '';
       selectedClubs.forEach(club => {
         clubsHtml += `
-          <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200 flex flex-col justify-between">
+          <div class="bg-emerald-50/70 p-5 md:p-6 rounded-2xl border border-emerald-200/80 flex flex-col justify-between shadow-sm hover:shadow-md transition">
             <div>
-              <span class="text-xs font-bold bg-emerald-200 text-emerald-800 px-2.5 py-0.5 rounded-full">${topCategory} 분과</span>
-              <h3 class="text-lg font-bold text-gray-900 mt-2">${club.name}</h3>
-              <p class="text-xs text-gray-500 mt-1">📍 동아리방: ${club.loc}</p>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold bg-emerald-200/80 text-emerald-800 px-3 py-1 rounded-full">${topCategory} 분과</span>
+              </div>
+              <h3 class="text-xl font-extrabold text-gray-900 mb-1">${club.name}</h3>
+              <p class="text-xs font-semibold text-emerald-700 mb-3">📍 ${club.loc}</p>
+              
+              <!-- 동아리 소개 문구 영역 (내용이 길어져도 깔끔하게 감싸줍니다) -->
+              <p class="text-xs md:text-sm text-gray-600 leading-relaxed bg-white/80 p-3 rounded-xl border border-emerald-100 mb-4 min-h-[70px]">
+                ${club.desc}
+              </p>
             </div>
-            <div class="mt-4 flex gap-2">
-              <a href="#" target="_blank" class="flex-1 py-1.5 bg-pink-500 text-white rounded-lg text-xs font-bold text-center hover:bg-pink-600 transition">인스타</a>
-              <a href="#" target="_blank" class="flex-1 py-1.5 bg-gray-800 text-white rounded-lg text-xs font-bold text-center hover:bg-gray-900 transition">신청서</a>
+
+            <!-- 버튼 영역 -->
+            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-emerald-100">
+              <a href="#" target="_blank" class="py-2.5 bg-pink-500 text-white rounded-xl text-xs md:text-sm font-bold text-center hover:bg-pink-600 transition shadow-sm">📸 인스타</a>
+              <a href="#" target="_blank" class="py-2.5 bg-slate-800 text-white rounded-xl text-xs md:text-sm font-bold text-center hover:bg-slate-900 transition shadow-sm">📝 신청서</a>
             </div>
           </div>
         `;
       });
 
-      container.innerHTML = `
+      quizContainer.innerHTML = `
         <div class="text-center animate-fade-in">
-          <div class="text-4xl mb-2">🎉</div>
-          <h2 class="text-2xl font-extrabold text-gray-900 mb-1">당신에게 이런 동아리들이 어울릴 것 같아요!</h2>
-          <p class="text-sm text-gray-500 mb-6">회원님의 성향 분석을 바탕으로 추천해 드리는 동아리 리스트입니다.</p>
+          <div class="text-5xl mb-3">🎉</div>
+          <h2 class="text-2xl md:text-3xl font-extrabold text-gray-900 mb-2">당신에게 이런 동아리들이 어울릴 것 같아요!</h2>
+          <p class="text-sm md:text-base text-gray-500 mb-8">회원님의 성향 분석을 바탕으로 추천해 드리는 동아리 리스트입니다.</p>
           
-          <!-- 추천 동아리 3개 카드 그리드 배치 (가로 확장형태) -->
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-left mb-6">
+          <!-- 카드 3개 레이아웃 (PC 3열 / 모바일 1열) -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5 text-left mb-8">
             ${clubsHtml}
           </div>
 
-          <div class="bg-emerald-100 border border-emerald-300 p-3 rounded-xl mb-6 text-xs text-emerald-900">
+          <!-- 이벤트 안내 바 -->
+          <div class="bg-emerald-100/80 border border-emerald-300 p-4 rounded-2xl mb-6 text-xs md:text-sm text-emerald-900 font-medium">
             📸 <b>이 화면을 캡처해서</b> 총동아리연합회 부스로 오시면 이벤트 뽑기권/상품을 드립니다!
           </div>
 
-          <button onclick="restartQuiz()" class="w-full py-3 bg-emerald-700 text-white rounded-xl font-bold hover:bg-emerald-800 transition shadow-md">
+          <button onclick="restartQuiz()" class="w-full max-w-md mx-auto block py-3.5 bg-emerald-700 text-white rounded-2xl font-bold hover:bg-emerald-800 transition shadow-lg text-base">
             🔄 다시 테스트하기
           </button>
         </div>
